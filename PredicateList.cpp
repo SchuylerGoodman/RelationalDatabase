@@ -38,3 +38,14 @@ std::string PredicateList::toString()
     }
     return out;
 }
+
+vector<Predicate*>* PredicateList::getPredicates()
+{
+    vector<Predicate*>* preds = new vector<Predicate*>();
+    preds->push_back(predicate);
+    for(int i = 0; i < listSize; i++)
+    {
+        preds->push_back(predicateList[i]);
+    }
+    return preds;
+}

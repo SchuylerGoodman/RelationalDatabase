@@ -78,3 +78,13 @@ std::string Parameter::expressionToString()
     out += ")";
     return out;
 }
+/*
+Token* Parameter::getParameterToken()
+{
+    return token;
+}
+
+Expression* Parameter::getParameterExpression()
+{
+    return expression;
+}*/

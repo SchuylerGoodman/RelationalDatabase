@@ -37,3 +37,13 @@ std::string Scheme::toString()
     out += "(" + IDList->toString() + ")";
     return out;
 }
+
+Token* Scheme::getSchemeID()
+{
+    return Id;
+}
+
+IdentifierList* Scheme::getIDList()
+{
+    return IDList;
+}

@@ -2,6 +2,7 @@
 #define CONSTANTLIST_H_
 
 #include "Lex.h"
+#include <iostream>
 
 class ConstantList
 {
@@ -18,6 +19,8 @@ class ConstantList
     int getSize();
 
     std::string toString();
+
+    vector<Token*>* getConstants();
 
   private:
 

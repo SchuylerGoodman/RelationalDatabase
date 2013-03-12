@@ -37,3 +37,13 @@ std::string Predicate::toString()
     out += ")";
     return out;
 }
+
+Token* Predicate::getPredicateID()
+{
+    return Id;
+}
+
+ParameterList* Predicate::getParameterList()
+{
+    return parameterList;
+}

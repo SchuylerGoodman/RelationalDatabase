@@ -2,6 +2,7 @@
 #define PARAMETERLIST_H_
 
 #include "Parameter.h"
+#include <iostream>
 
 class ParameterList
 {
@@ -18,6 +19,8 @@ class ParameterList
     int getSize();
 
     std::string toString();
+
+    vector<Parameter*>* getParameters();
 
   private:
 

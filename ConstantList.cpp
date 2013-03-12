@@ -39,3 +39,14 @@ std::string ConstantList::toString()
     }
     return out;
 }
+
+vector<Token*>* ConstantList::getConstants()
+{
+    vector<Token*>* consts = new vector<Token*>();
+    consts->push_back(BigDaddyString);
+    for(int i = 0; i < listSize; i++)
+    {
+        consts->push_back(StringList[i]);
+    }
+    return consts;
+}

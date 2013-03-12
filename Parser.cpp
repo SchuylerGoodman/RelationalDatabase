@@ -709,5 +709,9 @@ int main(int argc, char* argv[])
         cout << "Success!" << endl;
         cout << datalogProgram->toString();
     }
+    cout << endl;
+    //datalogProgram->getRulesList()->getRules();
+    (*(*datalogProgram->getRulesList()->getRules())[0]->getPredicateList()->getPredicates())[0]->getParameterList()->getParameters();
+    cout << endl;
     return 0;
 }

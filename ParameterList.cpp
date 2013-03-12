@@ -39,3 +39,14 @@ std::string ParameterList::toString()
     }
     return out;
 }
+
+vector<Parameter*>* ParameterList::getParameters()
+{
+    vector<Parameter*>* params = new vector<Parameter*>();
+    params->push_back(mainParam);
+    for(int i = 0; i < listSize; i++)
+    {
+        params->push_back(parameterList[i]);
+    }
+    return params;
+}

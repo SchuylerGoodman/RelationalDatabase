@@ -16,6 +16,9 @@ class SchemesList
     int getSize();
 
     std::string toString();
+
+    vector<Scheme*>* getSchemes();
+
   private:
 
     Scheme* scheme;

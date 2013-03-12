@@ -2,6 +2,7 @@
 #define PREDICATELIST_H_
 
 #include "Predicate.h"
+#include <iostream>
 
 class PredicateList
 {
@@ -18,6 +19,8 @@ class PredicateList
     int getSize();
 
     std::string toString();
+
+    vector<Predicate*>* getPredicates();
 
   private:
 

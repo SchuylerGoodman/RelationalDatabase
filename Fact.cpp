@@ -36,3 +36,13 @@ std::string Fact::toString()
     out += "(" + clist->toString() + ").";
     return out;
 }
+
+Token* Fact::getFactID()
+{
+    return Id;
+}
+
+ConstantList* Fact::getConstantList()
+{
+    return clist;
+}

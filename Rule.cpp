@@ -37,3 +37,13 @@ std::string Rule::toString()
     out += ".";
     return out;
 }
+
+Scheme* Rule::getHeadPredicate()
+{
+    return HeadPredicate;
+}
+
+PredicateList* Rule::getPredicateList()
+{
+    return predicateList;
+}

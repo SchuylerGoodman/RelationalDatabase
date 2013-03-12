@@ -43,3 +43,14 @@ std::string IdentifierList::toString()
     }
     return out;
 }
+
+vector<Token*>* IdentifierList::getIDs()
+{
+    vector<Token*>* IDs = new vector<Token*>();
+    IDs->push_back(Id);
+    for(int i = 0; i < listSize; i++)
+    {
+        IDs->push_back(IDTail[i]);
+    }
+    return IDs;
+}

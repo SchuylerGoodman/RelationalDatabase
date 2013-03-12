@@ -2,6 +2,7 @@
 #define IDENTIFIER_LIST_H_
 
 #include "Lex.h"
+#include <iostream>
 
 class IdentifierList
 {
@@ -17,6 +18,8 @@ class IdentifierList
     int getListSize();
 
     std::string toString();
+
+    vector<Token*>* getIDs();
 
   private:
 

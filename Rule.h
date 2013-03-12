@@ -20,6 +20,10 @@ class Rule
 
     std::string toString();
 
+    Scheme* getHeadPredicate();
+
+    PredicateList* getPredicateList();
+
   private:
 
     Scheme* HeadPredicate;

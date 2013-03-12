@@ -43,3 +43,14 @@ std::string SchemesList::toString()
     }
     return out;
 }
+
+vector<Scheme*>* SchemesList::getSchemes()
+{
+    vector<Scheme*>* teh_list = new vector<Scheme*>();
+    teh_list->push_back(scheme);
+    for(int i = 0; i < listSize; i++)
+    {
+        teh_list->push_back(schemes[i]);
+    }
+    return teh_list;
+}

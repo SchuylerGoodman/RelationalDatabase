@@ -19,6 +19,10 @@ class Predicate
     
     std::string toString();
 
+    Token* getPredicateID();
+
+    ParameterList* getParameterList();
+
   private:
 
     Token* Id;

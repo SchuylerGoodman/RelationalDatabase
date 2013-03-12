@@ -31,3 +31,13 @@ std::string FactsList::toString()
     }
     return out;
 }
+
+vector<Fact*>* FactsList::getFacts()
+{
+    vector<Fact*>* facsh = new vector<Fact*>();
+    for(int i = 0; i < listSize; i++)
+    {
+        facsh->push_back(facts[i]);
+    }
+    return facsh;
+}

@@ -19,6 +19,10 @@ class Fact
 
     std::string toString();
 
+    Token* getFactID();
+
+    ConstantList* getConstantList();
+
   private:
 
     Token* Id;

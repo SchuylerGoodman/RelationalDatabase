@@ -2,6 +2,7 @@
 #define FACTS_LIST_H_
 
 #include "Fact.h"
+#include <iostream>
 
 class FactsList
 {
@@ -16,6 +17,8 @@ class FactsList
     int getSize();
 
     std::string toString();
+
+    vector<Fact*>* getFacts();
 
   private:
 

@@ -18,6 +18,10 @@ class Scheme
 
     std::string toString();
 
+    Token* getSchemeID();
+
+    IdentifierList* getIDList();
+
   private:
     
     Token* Id;

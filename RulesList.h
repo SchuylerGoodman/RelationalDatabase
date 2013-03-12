@@ -17,6 +17,8 @@ class RulesList
 
     std::string toString();
 
+    vector<Rule*>* getRules();
+
   private:
 
     vector<Rule*> rulesList;

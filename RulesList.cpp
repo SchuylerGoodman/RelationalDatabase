@@ -31,3 +31,13 @@ std::string RulesList::toString()
     }
     return out;
 }
+
+vector<Rule*>* RulesList::getRules()
+{
+    vector<Rule*>* rles = new vector<Rule*>();
+    for(int i = 0; i < listSize; i++)
+    {
+        rles->push_back(rulesList[i]);
+    }
+    return rles;
+}
