@@ -1,0 +1,9 @@
+Schemes:
+span(a,c)
+Facts:
+blah('b','h').
+hibbal('n','a').
+Rules:
+him(a,g) :- span(a,c).
+Queries:
+ban(a,f)?
