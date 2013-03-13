@@ -39,3 +39,14 @@ std::string QueryList::toString()
     }
     return out;
 }
+
+vector<Query*>* QueryList::getQueries()
+{
+    vector<Query*>* qs = new vector<Query*>();
+    qs->push_back(firstQuery);
+    for(int i = 0; i < listSize; i++)
+    {
+        qs->push_back(queryList[i]);
+    }
+    return qs;
+}

@@ -19,6 +19,8 @@ class QueryList
 
     std::string toString();
 
+    vector<Query*>* getQueries();
+
   private:
 
     Query* firstQuery;

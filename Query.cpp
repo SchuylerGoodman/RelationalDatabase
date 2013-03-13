@@ -28,3 +28,8 @@ std::string Query::toString()
     out += "?";
     return out;
 }
+
+Predicate* Query::getPredicate()
+{
+    return predicate;
+}

@@ -17,6 +17,8 @@ class Query
 
     std::string toString();
 
+    Predicate* getPredicate();
+
   private:
       
     Predicate* predicate;
