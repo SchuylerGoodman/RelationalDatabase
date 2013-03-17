@@ -6,6 +6,7 @@
 
 class IdentifierList
 {
+
   public:
     
     IdentifierList();

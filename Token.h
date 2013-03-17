@@ -108,6 +108,8 @@ class Token {
          */
         bool operator==(const Token& token);
 
+        bool operator<(const Token& token);
+
     //Commands
         /**
          * The tokenType setter.

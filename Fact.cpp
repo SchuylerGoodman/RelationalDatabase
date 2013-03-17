@@ -8,7 +8,6 @@ Fact::Fact()
 
 Fact::~Fact()
 {
-
 }
 
 void Fact::setID(Token* inputID)

@@ -664,7 +664,7 @@ Query* Parser::parseQuery(int* newCount, Domain* dman)
 }
 
 /////////////////////////////////////////////////////////////
-vector<Token*>* MrVectorCleaner(vector<Token*>* input)
+vector<Token*>* Parser::MrVectorCleaner(vector<Token*>* input)
 {
     bool comment = true;
     while(comment)
@@ -692,26 +692,3 @@ vector<Token*>* MrVectorCleaner(vector<Token*>* input)
     return input;
 }
 
-int main(int argc, char* argv[])
-{
-    int* counter = new int(0);
-    Lex lex(argv[1]);
-    vector<Token*>* raw_vector = lex.tokens;
-    Parser* parser = new Parser(MrVectorCleaner(raw_vector), counter);
-    DatalogProgram* datalogProgram = parser->parseDatalogProgram();
-    if(parser->hazFailed())
-    {
-        cout << "Failure!" << endl;
-        cout << "  " << parser->getFailToken()->toString();
-    }
-    else
-    {
-        cout << "Success!" << endl;
-        cout << datalogProgram->toString();
-    }
-//    cout << endl;
-  //  cout << (*datalogProgram->getQueryList()->getQueries())[0]->getPredicate()->getPredicateID()->getTokensValue();
-    //(*(*datalogProgram->getRulesList()->getRules())[0]->getPredicateList()->getPredicates())[0]->getParameterList()->getParameters();
-   // cout << endl;
-    return 0;
-}

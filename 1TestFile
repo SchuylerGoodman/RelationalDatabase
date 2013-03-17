@@ -1,0 +1,10 @@
+Schemes:
+span(a,b,c,d)
+plan(a,b,c,d)
+Facts:
+span('a','b','c','d').
+span('q','w','e','r').
+Rules:
+span(a,b,c,d) :- plan('a','b','c',d).
+Queries:
+span(a,b,'c','d')?

@@ -21,6 +21,8 @@ class Parser
 
     bool hazFailed();
 
+    vector<Token*>* MrVectorCleaner(vector<Token*>* input);
+
   private:
 
     TokenType getTokenType();

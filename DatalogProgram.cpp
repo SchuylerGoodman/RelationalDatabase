@@ -7,9 +7,9 @@ DatalogProgram::DatalogProgram()
 
 DatalogProgram::~DatalogProgram()
 {
-    delete[] slist;
-    delete[] flist;
-    delete[] dman;
+    delete slist;
+    delete flist;
+    delete dman;
     delete rlist;
     delete qlist;
 }

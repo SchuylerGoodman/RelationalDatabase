@@ -1,0 +1,10 @@
+Schemes:
+span(studentID,PhoneNumber,Address,Name)
+Facts:
+span('s','c','d','e').
+span('a','b','c','d').
+span('n','c','v','a').
+span('n','d','v','a').
+Rules:
+Queries:
+span(a,b,'c','d')?

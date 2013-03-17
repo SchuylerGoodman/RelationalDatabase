@@ -58,6 +58,15 @@ bool Token::operator==(const Token& token) {
                   tokenType == token.tokenType;
 }
 
+bool Token::operator<(const Token& token)
+{
+    if(value < token.value)
+    {
+        return true;
+    }
+    return false;
+}
+
 void Token::setTokenType(const TokenType newTokenType) {
     tokenType = newTokenType;
 }
