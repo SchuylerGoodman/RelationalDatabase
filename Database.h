@@ -16,6 +16,8 @@ class Database
 
   private:
 
+    Relation workThatRelation(Relation& inputRelation, Query* inputQuery);
+
     vector<Relation*>* relations;
 
     Relation* getRelation(Scheme* inputScheme);
@@ -25,6 +27,8 @@ class Database
     //populate tuples from rules TODO
 
     string answerQuery(Query* inputQuery); 
+
+    Domain* domain;
 
 };
 

@@ -1,0 +1,13 @@
+Schemes:
+SK(A,B,C,D,E)
+Facts:
+SK('a','c','d','e','f').
+SK('b','c','d','e','f').
+SK('b','b','c','c','b').
+SK('c','c','d','d','c').
+Rules:
+Queries:
+#SK(X,'c')?
+#SK('b','c')?
+SK(X,X,Y,Y,X)?
+#SK(X,Y)?

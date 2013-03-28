@@ -19,6 +19,8 @@ class Query
 
     Predicate* getPredicate();
 
+    Token* getQueryID();
+
   private:
       
     Predicate* predicate;

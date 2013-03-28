@@ -33,3 +33,8 @@ Predicate* Query::getPredicate()
 {
     return predicate;
 }
+
+Token* Query::getQueryID()
+{
+    return predicate->getPredicateID();
+}

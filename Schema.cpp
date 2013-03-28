@@ -10,6 +10,11 @@ Schema::Schema(IdentifierList* inputIdList)
     setSchematics(inputIdList);
 }
 
+Schema::Schema(Schema& inputSchema)
+{
+    schematics = new vector<Token*>(*inputSchema.getSchematics());
+}
+
 Schema::~Schema()
 {
 }
@@ -17,6 +22,21 @@ Schema::~Schema()
 vector<Token*>* Schema::getSchematics()
 {
     return schematics;
+}
+
+void Schema::renameTokenAt(int index, Token& inputToken)
+{
+    (*(*schematics)[index]) = inputToken;
+    return;
+}
+
+void Schema::removeTokenAt(int index)
+{
+    for(int i = index; i < schematics->size() - 1; i++)
+    {
+        (*schematics)[i] = (*schematics)[i + 1];
+    }
+    schematics->pop_back();
 }
 
 int Schema::getListSize()

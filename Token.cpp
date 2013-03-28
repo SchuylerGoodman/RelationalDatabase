@@ -50,7 +50,7 @@ string Token::toString() const {
     string += lineNumberString;
     string += ")\n";
     return string;
-};
+}
 
 bool Token::operator==(const Token& token) {
     bool result = lineNumber == token.lineNumber &&
@@ -58,7 +58,7 @@ bool Token::operator==(const Token& token) {
                   tokenType == token.tokenType;
 }
 
-bool Token::operator<(const Token& token)
+bool Token::operator<(const Token& token) const
 {
     if(value < token.value)
     {
@@ -69,4 +69,9 @@ bool Token::operator<(const Token& token)
 
 void Token::setTokenType(const TokenType newTokenType) {
     tokenType = newTokenType;
+}
+
+void Token::setTokenValue(string newTokenValue)
+{
+    value = newTokenValue;
 }

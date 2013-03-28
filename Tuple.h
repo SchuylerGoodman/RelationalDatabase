@@ -3,7 +3,7 @@
 
 #include "Schema.h"
 
-typedef pair<Token*, Token*> tuplePair;
+typedef pair<Token, Token> tuplePair;
 
 class Tuple
 {
@@ -13,18 +13,33 @@ class Tuple
     Tuple();
     ~Tuple();
     Tuple(Schema* inputSchema, ConstantList* inputConstantList);
+    Tuple(const Tuple& inputTuple);
+
+//    Tuple* makeNewTuple();
     
-    vector<tuplePair*>* getPairs();
+    tuplePair getTuplePairAt(int index) const;
+
+    vector<tuplePair> getPairs() const;
+
+    void setPairs(vector<tuplePair> inputPairs);
+
+    Token getTokenFromPairAt(int index);
+
+    void renameTokenSchemaAt(int index, Token& inputToken);
+
+    void removePairWithout(set< pair<Token, Token> >* inputTokens);
+
+    void removePairAt(int index);
+
+    int getPairVectorSize() const;
 
     string toString();
 
-    friend bool operator<(Tuple& t1, Tuple& t2);
-
-    friend bool operator==(Tuple& t1, Tuple& t2);
+    friend bool operator<(const Tuple& t1, const Tuple& t2);
 
   private:
 
-    vector<tuplePair*>* pairs; // a vector with schemaID-constant pairs
+    vector<tuplePair> pairs; // a vector with schemaID-constant pairs
 
 };
 

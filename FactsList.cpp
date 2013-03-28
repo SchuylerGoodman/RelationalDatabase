@@ -35,7 +35,7 @@ std::string FactsList::toString()
 vector<Fact*>* FactsList::getFacts()
 {
     vector<Fact*>* facsh = new vector<Fact*>();
-    for(int i = 0; i < listSize; i++)
+    for(int i = 0; i < facts.size(); i++)
     {
         facsh->push_back(facts[i]);
     }

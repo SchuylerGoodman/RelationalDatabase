@@ -35,9 +35,9 @@ class Parameter
     std::string toString();
 
     std::string expressionToString();
-/*
-    Token* getParameterToken();
 
+    Token* getParameterToken();
+/*
     Expression* getParameterExpression();
 */
   private:

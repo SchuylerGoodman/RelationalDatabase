@@ -2,6 +2,7 @@
 #define Token_h
 
 #include "TokenType.h"
+#include <iostream>
 /**
  * The lexical analyzer provides access to a list of tokens.  This defines what
  * a token is.
@@ -108,7 +109,7 @@ class Token {
          */
         bool operator==(const Token& token);
 
-        bool operator<(const Token& token);
+        bool operator<(const Token& token) const;
 
     //Commands
         /**
@@ -119,6 +120,8 @@ class Token {
          * PostCondition: tokenType = newTokenType 
          */
         void setTokenType(const TokenType newTokenType);
+
+        void setTokenValue(std::string newTokenValue);
         
     private:
         //Domain Implementation

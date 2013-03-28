@@ -1,10 +1,15 @@
 Schemes:
 span(studentID,PhoneNumber,Address,Name)
+plan(boo, hah)
 Facts:
-span('s','c','d','e').
 span('a','b','c','d').
+plan('b','n').
+span('a','b','c','c').
 span('n','c','v','a').
 span('n','d','v','a').
 Rules:
 Queries:
-span(a,b,'c','d')?
+span('n',b,'c',d)?
+span(a,b,'v','a')?
+plan(b,n)?
+span('a',b,c,d)?

@@ -29,6 +29,8 @@ class Domain
     */
     int getSize();
 
+    set<std::string> getStrings();
+
     /* Formats the strings in the vector for output with each string creating a new line and two spaces before it.
 
     Parameters:  None

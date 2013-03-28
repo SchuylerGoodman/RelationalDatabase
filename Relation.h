@@ -3,6 +3,7 @@
 
 #include "Tuple.h"
 #include <set>
+#include <map>
 
 class Relation
 {
@@ -11,21 +12,41 @@ class Relation
 
     Relation();
     Relation(Scheme* inputScheme);
+    Relation(const Relation& inputRelation);
     ~Relation();
 
-    Token* getID();
+    Token* getID() const;
 
     Schema* getSchema();
 
-    set<Tuple*>* getTuples();
+    void setSchema(Schema& inputSchema);
+
+    set<Tuple>* getTuples();
 
     int getSchemaCount();
 
+    void initTuples();
+
     int getTupleListSize();
 
-    void insertTuple(ConstantList* inputConstantList);
+    void insertTuples(ConstantList* inputConstantList);
+
+    void insertTuple(Tuple& inputTuple);
 
     string toString();
+    
+    string tuplesToString();
+
+    Relation select(Query* inputQuery);
+
+    Relation rename(Query* inputQuery);
+
+    void renameSchemaAt(int index, Token& inputToken);
+    
+    Relation project(set< pair <Token, Token> >* inputTokens, Domain* inputDomain);
+
+
+//    void recursiveProject(set<Tuple>* inputTuples, vector< pair<Token, Token> >* inputTokens, int inputIndex, Domain* inputDomain);
     
   private:
 
@@ -33,7 +54,7 @@ class Relation
 
     Schema* schema;
 
-    set<Tuple*>* tuples;
+    set<Tuple>* tuples;
 
     Schema* setSchema(IdentifierList* inputIdList);
 

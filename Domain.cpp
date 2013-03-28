@@ -21,6 +21,11 @@ int Domain::getSize()
     return strings.size();
 }
 
+set<std::string> Domain::getStrings()
+{
+    return strings;
+}
+
 std::string Domain::toString()
 {
     std::string out;

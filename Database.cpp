@@ -7,6 +7,8 @@ Database::Database(DatalogProgram* dprog)
     //vector<Rule*>* rules = dprog->getRulesList()->getRules();
     vector<Query*>* queries = dprog->getQueryList()->getQueries();
 
+    domain = dprog->getDomain();
+
     relations = new vector<Relation*>();
 
 //Make Relations From Schemes
@@ -26,9 +28,11 @@ Database::Database(DatalogProgram* dprog)
 //Answer Queries
     for(int i = 0; i < queries->size(); i++)
     {
-        cout << answerQuery((*queries)[i]);
+        string out;
+        out += (*queries)[i]->toString();
+        out += answerQuery((*queries)[i]) + "\n";
+        cout << out;
     }
-
 }
 
 Database::~Database()
@@ -43,6 +47,27 @@ string Database::toString()
         out += (*relations)[i]->toString();
     }
     return out;
+}
+
+Relation Database::workThatRelation(Relation& inputRelation, Query* inputQuery)
+{
+    Relation R1 = inputRelation.select(inputQuery);
+    Relation R2 = R1.rename(inputQuery);
+
+    vector<Parameter*>* plist = inputQuery->getPredicate()->getParameterList()->getParameters();
+    set<pair<Token, Token> >* projectRequire = new set< pair<Token, Token> >();
+    for(int i = 0; i < plist->size(); i++)
+    {
+        if((*plist)[i]->getParameterToken()->getTokenType() == ID)
+        {
+            pair<Token, Token> newPair((*(*plist)[i]->getParameterToken()), (*(*plist)[i]->getParameterToken()));
+            projectRequire->insert(newPair);
+        }
+    }
+
+    Relation R3 = R2.project(projectRequire, domain);
+    delete projectRequire;
+    return R3;
 }
 
 Relation* Database::getRelation(Scheme* inputScheme)
@@ -66,7 +91,7 @@ void Database::insertTuple(Fact* inputFact)
     }
     else //insert a tuple a the selected relation
     {
-        (*relations)[counter]->insertTuple(inputFact->getConstantList());
+        (*relations)[counter]->insertTuples(inputFact->getConstantList());
     }
 }
 
@@ -74,7 +99,27 @@ void Database::insertTuple(Fact* inputFact)
 
 string Database::answerQuery(Query* inputQuery)
 {
-    string out = "I'll get to Queries when I can...\n";
+    string out;
+    Relation good_relation;
+    Token* toke = inputQuery->getQueryID();
+    for(int i = 0; i < relations->size(); i++)
+    {
+        if(toke->getTokensValue() == (*relations)[i]->getID()->getTokensValue())
+        {
+            good_relation = workThatRelation( (*(*relations)[i]), inputQuery);
+        }
+    }
+    if(good_relation.getTupleListSize() == 0)
+    {
+        out += " No";
+    }
+    else
+    {
+        stringstream ssout;
+        ssout << good_relation.getTupleListSize();
+        out += " Yes(" + ssout.str() + ")";
+        out += good_relation.tuplesToString();
+    }
     return out;
 }
 
@@ -93,12 +138,7 @@ int main(int argc, char* argv[])
     else
     {
         cout << "Success!" << endl;
-        cout << datalogProgram->toString();
+        Database* dbase = new Database(datalogProgram);
     }
-
-    Database* dbase = new Database(datalogProgram);
-
-    cout << dbase->toString();
-
     return 0;
 }

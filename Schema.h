@@ -10,9 +10,14 @@ class Schema
 
     Schema();
     Schema(IdentifierList* inputIdList);
+    Schema(Schema& inputSchema);
     ~Schema();
 
     vector<Token*>* getSchematics();
+
+    void renameTokenAt(int index, Token& inputToken);
+
+    void removeTokenAt(int index);
 
     int getListSize();
 
