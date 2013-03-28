@@ -27,7 +27,7 @@ class Tuple
 
     void renameTokenSchemaAt(int index, Token& inputToken);
 
-    void removePairWithout(set< pair<Token, Token> >* inputTokens);
+    void removePairWithout(vector<Token>& inputTokens);
 
     void removePairAt(int index);
 

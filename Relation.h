@@ -37,13 +37,15 @@ class Relation
     
     string tuplesToString();
 
-    Relation select(Query* inputQuery);
+    string solvedQueryToString(vector<Token>& inputTokens);
+
+    Relation select(vector<Token>& inputTokens);
 
     Relation rename(Query* inputQuery);
 
     void renameSchemaAt(int index, Token& inputToken);
     
-    Relation project(set< pair <Token, Token> >* inputTokens, Domain* inputDomain);
+    Relation project(vector<Token>& inputTokens);
 
 
 //    void recursiveProject(set<Tuple>* inputTuples, vector< pair<Token, Token> >* inputTokens, int inputIndex, Domain* inputDomain);

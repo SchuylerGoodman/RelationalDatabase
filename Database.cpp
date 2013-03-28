@@ -51,23 +51,16 @@ string Database::toString()
 
 Relation Database::workThatRelation(Relation& inputRelation, Query* inputQuery)
 {
-    Relation R1 = inputRelation.select(inputQuery);
-    Relation R2 = R1.rename(inputQuery);
-
+    vector<Token> queryTokens;
     vector<Parameter*>* plist = inputQuery->getPredicate()->getParameterList()->getParameters();
-    set<pair<Token, Token> >* projectRequire = new set< pair<Token, Token> >();
     for(int i = 0; i < plist->size(); i++)
     {
-        if((*plist)[i]->getParameterToken()->getTokenType() == ID)
-        {
-            pair<Token, Token> newPair((*(*plist)[i]->getParameterToken()), (*(*plist)[i]->getParameterToken()));
-            projectRequire->insert(newPair);
-        }
+        queryTokens.push_back((*(*plist)[i]->getParameterToken()));
     }
-
-    Relation R3 = R2.project(projectRequire, domain);
-    delete projectRequire;
-    return R3;
+   
+    Relation R1 = inputRelation.select(queryTokens);
+    Relation R2 = R1.project(queryTokens);
+    return R2;
 }
 
 Relation* Database::getRelation(Scheme* inputScheme)
@@ -102,6 +95,14 @@ string Database::answerQuery(Query* inputQuery)
     string out;
     Relation good_relation;
     Token* toke = inputQuery->getQueryID();
+
+    vector<Token> queryTokens; // Get Tokens from Query ParameterList
+    vector<Parameter*>* plist = inputQuery->getPredicate()->getParameterList()->getParameters();
+    for(int i = 0; i < plist->size(); i++)
+    {
+        queryTokens.push_back((*(*plist)[i]->getParameterToken()));
+    }
+
     for(int i = 0; i < relations->size(); i++)
     {
         if(toke->getTokensValue() == (*relations)[i]->getID()->getTokensValue())
@@ -118,10 +119,12 @@ string Database::answerQuery(Query* inputQuery)
         stringstream ssout;
         ssout << good_relation.getTupleListSize();
         out += " Yes(" + ssout.str() + ")";
-        out += good_relation.tuplesToString();
+        out += good_relation.solvedQueryToString(queryTokens);
     }
     return out;
 }
+
+
 
 int main(int argc, char* argv[])
 {
@@ -137,7 +140,6 @@ int main(int argc, char* argv[])
     }
     else
     {
-        cout << "Success!" << endl;
         Database* dbase = new Database(datalogProgram);
     }
     return 0;

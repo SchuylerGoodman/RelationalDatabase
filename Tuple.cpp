@@ -34,7 +34,7 @@ tuplePair Tuple::getTuplePairAt(int index) const
     return pairs[index];
 }
 
-void Tuple::removePairWithout(set< pair<Token, Token> >* inputTokens)
+void Tuple::removePairWithout(vector<Token>& inputTokens)
 {
     int oldPairSize = 0;
     while(oldPairSize != pairs.size())
@@ -44,10 +44,9 @@ void Tuple::removePairWithout(set< pair<Token, Token> >* inputTokens)
         while(i < pairs.size())
         {
             bool remove = true;
-            for(set< pair<Token, Token> >::iterator it = inputTokens->begin(); it != inputTokens->end(); it++)
+            for(int j = 0; j < inputTokens.size(); j++)
             {
-                pair<Token, Token> thisPair = (*it);
-                if(thisPair.first.getTokensValue() == pairs[i].first.getTokensValue())
+                if(inputTokens[j].getTokenType() == ID)
                 {
                     remove = false;
                 }

@@ -111,6 +111,53 @@ string Relation::tuplesToString()
     return out;
 }
 
+string Relation::solvedQueryToString(vector<Token>& inputTokens)
+{
+    string out;
+    vector<std::pair<Token, vector<int> > > myMap;
+    for(int i = 0; i < inputTokens.size(); i++)
+    {
+        bool inserted = false;
+        for(int j = 0; j < myMap.size(); j++)
+        {
+            if(myMap[j].first.getTokensValue() == inputTokens[i].getTokensValue())
+            {
+                myMap[j].second.push_back(i);
+                inserted = true;
+            }
+        }
+        if(!inserted)
+        { 
+            vector<int> newVec;
+            newVec.push_back(i);
+            myMap.push_back(pair<Token, vector<int> >(inputTokens[i], newVec) );
+        }
+    }
+
+    for(set<Tuple>::iterator it = tuples->begin(); it != tuples->end(); it++)
+    {
+        int firstInMapVector = 0;
+        Tuple thisTuple = (*it);
+        if(thisTuple.toString() != "")
+        {
+            out += "\n  ";
+        }
+        for(int i = 0; i < myMap.size(); i++)
+        {
+            if(myMap[i].first.getTokenType() == ID)
+            {
+                out += myMap[i].first.getTokensValue() + "=";
+                out += thisTuple.getTokenFromPairAt(myMap[i].second[firstInMapVector]).getTokensValue();
+                if(i + 1 != myMap.size())
+                {
+                    out += ", ";
+                }
+            }
+        }
+    }
+    return out;
+}
+
 void Relation::setSchema(Schema& inputSchema)
 {
     if(!schema)
@@ -124,23 +171,21 @@ void Relation::setSchema(Schema& inputSchema)
     return;
 }
 
-Relation Relation::select(Query* inputQuery)
+Relation Relation::select(vector<Token>& inputTokens)
 {
     Relation newRelation(*this);
     newRelation.setSchema(*schema); 
     newRelation.initTuples();
     map<Token, vector<int> > myMap;
     
-    vector<Parameter*>* plist = inputQuery->getPredicate()->getParameterList()->getParameters();
-
-    for(int i = 0; i < plist->size(); i++)
+    for(int i = 0; i < inputTokens.size(); i++)
     {
-        if((*plist)[i]->getParameterToken()->getTokenType() == ID)
+        if(inputTokens[i].getTokenType() == ID)
         {
             bool inserted = false;
             for(map<Token, vector<int> >::iterator it = myMap.begin(); it != myMap.end(); it++)
             {
-                if(it->first.getTokensValue() == (*plist)[i]->getParameterToken()->getTokensValue())
+                if(it->first.getTokensValue() == inputTokens[i].getTokensValue())
                 {
                     it->second.push_back(i);
                     inserted = true;
@@ -150,7 +195,7 @@ Relation Relation::select(Query* inputQuery)
             { 
                 vector<int> newVec;
                 newVec.push_back(i);
-                myMap.insert(pair<Token, vector<int> >((*(*plist)[i]->getParameterToken()), newVec) );
+                myMap.insert(pair<Token, vector<int> >(inputTokens[i], newVec) );
             }
         }
     }
@@ -163,11 +208,11 @@ Relation Relation::select(Query* inputQuery)
         Tuple thisTuple = tempTuple;
         for(int j = 0; j < thisTuple.getPairVectorSize(); j++) //for all pairs in this tuple
         {
-            for(int i = 0; i < plist->size(); i++) //for all parameters in the query
+            for(int i = 0; i < inputTokens.size(); i++) //for all parameters in the query
             {
-                if((*plist)[i]->getParameterToken()->getTokenType() == STRING && j == i) //if this parameter is the placeholder string
+                if(inputTokens[i].getTokenType() == STRING && j == i) //if this parameter is the placeholder string
                 {
-                    if((*plist)[i]->getParameterToken()->getTokensValue() != thisTuple.getTokenFromPairAt(j).getTokensValue()) //if the values don't match
+                    if(inputTokens[i].getTokensValue() != thisTuple.getTokenFromPairAt(j).getTokensValue()) //if the values don't match
                     {
                         isTrue = false; //do not add to the new relation
                     }
@@ -234,7 +279,7 @@ void Relation::renameSchemaAt(int index, Token& inputToken)
     return;
 }
 
-Relation Relation::project(set< pair<Token, Token> >* inputTokens, Domain* inputDomain)
+Relation Relation::project(vector<Token>& inputTokens)
 {
     Relation newRelation = (*this);
     Schema newSchema(*schema);
