@@ -47,3 +47,20 @@ PredicateList* Rule::getPredicateList()
 {
     return predicateList;
 }
+
+vector<Token> Rule::getParametersAt(int index)
+{
+    vector<Token> newVec;
+    vector<Parameter*>* parameters = (*predicateList->getPredicates())[index]->getParameterList()->getParameters();
+    for(int i = 0; i < parameters->size(); i++)
+    {
+        newVec.push_back((*(*parameters)[i]->getParameterToken()));
+    }
+    return newVec;
+}
+
+Token Rule::getParameterIDAt(int index)
+{
+    Token newToken = (*(*predicateList->getPredicates())[index]->getPredicateID());
+    return newToken;
+}

@@ -2,12 +2,10 @@
 
 Database::Database(DatalogProgram* dprog)
 {
-    vector<Scheme*>* schemes = dprog->getSchemesList()->getSchemes();
-    vector<Fact*>* facts = dprog->getFactsList()->getFacts();
-    //vector<Rule*>* rules = dprog->getRulesList()->getRules();
-    vector<Query*>* queries = dprog->getQueryList()->getQueries();
-
-    domain = dprog->getDomain();
+    schemes = dprog->getSchemesList()->getSchemes();
+    facts = dprog->getFactsList()->getFacts();
+    rules = dprog->getRulesList()->getRules();
+    queries = dprog->getQueryList()->getQueries();
 
     relations = new vector<Relation*>();
 
@@ -24,6 +22,7 @@ Database::Database(DatalogProgram* dprog)
     }
 
 //Populate Tuples from Rules TODO
+    cout << solveRules() + "\n";
 
 //Answer Queries
     for(int i = 0; i < queries->size(); i++)
@@ -59,7 +58,8 @@ Relation Database::workThatRelation(Relation& inputRelation, Query* inputQuery)
     }
    
     Relation R1 = inputRelation.select(queryTokens);
-    Relation R2 = R1.project(queryTokens);
+
+    Relation R2 = R1.project(queryTokens, 0);
     return R2;
 }
 
@@ -67,6 +67,19 @@ Relation* Database::getRelation(Scheme* inputScheme)
 {
     Relation* relation = new Relation(inputScheme);
     return relation;
+}
+
+Relation* Database::findRelation(Token relationID)
+{
+    for(int i = 0; i < relations->size(); i++)
+    {
+        if((*(*relations)[i]->getID()).getTokensValue() == relationID.getTokensValue())
+        {
+            Relation* outRelation = (*relations)[i];
+            return outRelation;
+        }
+    }
+    throw("Relation with ID=" + relationID.getTokensValue() + " not found in database");
 }
 
 void Database::insertTuple(Fact* inputFact)
@@ -89,6 +102,25 @@ void Database::insertTuple(Fact* inputFact)
 }
 
 //rules
+string Database::solveRules()
+{
+    string out;
+    for(int i = 0; i < rules->size(); i++)
+    {
+        if((*rules)[i]->getSize() > 1)
+        {
+            Relation* firstRelation = findRelation((*rules)[i]->getParameterIDAt(0));
+            Relation* secondRelation = findRelation((*rules)[i]->getParameterIDAt(1));
+            vector<Token> firstParams = (*rules)[i]->getParametersAt(0);
+            vector<Token> secondParams = (*rules)[i]->getParametersAt(1);
+            pair<vector<Token>, vector<Token> > newPair(firstParams, secondParams);
+            Relation newRelation(firstRelation->Join(newPair, secondRelation));
+            out += newRelation.toString() + "\n";
+        }
+    }
+    return out;
+}
+    
 
 string Database::answerQuery(Query* inputQuery)
 {
@@ -142,5 +174,7 @@ int main(int argc, char* argv[])
     {
         Database* dbase = new Database(datalogProgram);
     }
+    
+
     return 0;
 }

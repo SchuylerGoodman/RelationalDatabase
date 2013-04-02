@@ -5,6 +5,12 @@
 #include <set>
 #include <map>
 
+vector<Token> combineTokenVectors(vector<Token>& first, vector<Token>& second);
+
+vector<Token> removeStrings(vector<Token>& inputVector);
+
+vector<int> getIDsFromTokenVector(vector<Token>& inputVector);
+
 class Relation
 {
 
@@ -17,11 +23,9 @@ class Relation
 
     Token* getID() const;
 
-    Schema* getSchema();
+    Schema* getSchema() const;
 
-    void setSchema(Schema& inputSchema);
-
-    set<Tuple>* getTuples();
+    set<Tuple>* getTuples() const;
 
     int getSchemaCount();
 
@@ -33,23 +37,24 @@ class Relation
 
     void insertTuple(Tuple& inputTuple);
 
+    void setTuples(set<Tuple>* inputTuples);
+
     string toString();
     
     string tuplesToString();
 
     string solvedQueryToString(vector<Token>& inputTokens);
 
+    void setSchemaFromTuples();
+
     Relation select(vector<Token>& inputTokens);
 
-    Relation rename(Query* inputQuery);
+    Relation rename(pair<vector<Token>, vector<Token> >& ruleParameters, Relation& targetRelation);
 
-    void renameSchemaAt(int index, Token& inputToken);
-    
-    Relation project(vector<Token>& inputTokens);
+    Relation project(vector<Token>& inputTokens, vector<Token>* opTokens);
 
+    Relation Join(pair<vector<Token>, vector<Token> >& pair, Relation* nextRelation);
 
-//    void recursiveProject(set<Tuple>* inputTuples, vector< pair<Token, Token> >* inputTokens, int inputIndex, Domain* inputDomain);
-    
   private:
 
     Token* Id;
@@ -59,6 +64,10 @@ class Relation
     set<Tuple>* tuples;
 
     Schema* setSchema(IdentifierList* inputIdList);
+
+    void setSchema(Schema& inputSchema);
+
+    Relation CartesianCrossProduct(pair<vector<Token>, vector<Token> >& pair, Relation& inputRelation);
 
 };
 

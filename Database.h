@@ -22,13 +22,21 @@ class Database
 
     Relation* getRelation(Scheme* inputScheme);
 
+    Relation* findRelation(Token relationID);
+
     void insertTuple(Fact* inputFact);
 
-    //populate tuples from rules TODO
+    string solveRules();
 
     string answerQuery(Query* inputQuery); 
 
-    Domain* domain;
+    vector<Scheme*>* schemes;
+
+    vector<Fact*>* facts;
+
+    vector<Rule*>* rules;
+
+    vector<Query*>* queries;
 
 };
 

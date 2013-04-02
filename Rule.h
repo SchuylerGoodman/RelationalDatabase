@@ -24,6 +24,10 @@ class Rule
 
     PredicateList* getPredicateList();
 
+    vector<Token> getParametersAt(int index);
+
+    Token getParameterIDAt(int index);
+
   private:
 
     Scheme* HeadPredicate;

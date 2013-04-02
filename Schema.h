@@ -10,10 +10,11 @@ class Schema
 
     Schema();
     Schema(IdentifierList* inputIdList);
-    Schema(Schema& inputSchema);
+    Schema(const Schema& inputSchema);
+    Schema(vector<Token>& inputTokens);
     ~Schema();
 
-    vector<Token*>* getSchematics();
+    vector<Token>* getSchematics() const;
 
     void renameTokenAt(int index, Token& inputToken);
 
@@ -23,11 +24,15 @@ class Schema
 
     string toString();
 
+    vector<Token> getTVecFromSchema();
+
+    Token operator[](int index);
+
   private:
 
     void setSchematics(IdentifierList* inputIdList);
 
-    vector<Token*>* schematics;
+    vector<Token>* schematics;
 
 };
 

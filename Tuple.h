@@ -14,8 +14,9 @@ class Tuple
     ~Tuple();
     Tuple(Schema* inputSchema, ConstantList* inputConstantList);
     Tuple(const Tuple& inputTuple);
+    Tuple(Tuple& inputTuple, Schema& inputSchema);
 
-//    Tuple* makeNewTuple();
+    Tuple removeDuplicates();
     
     tuplePair getTuplePairAt(int index) const;
 
@@ -33,14 +34,17 @@ class Tuple
 
     int getPairVectorSize() const;
 
+    Tuple combineTuples(Tuple& secondTuple);
+
     string toString();
+
+    Token operator[](const int& inputInt) const;
 
     friend bool operator<(const Tuple& t1, const Tuple& t2);
 
   private:
 
     vector<tuplePair> pairs; // a vector with schemaID-constant pairs
-
 };
 
 #endif

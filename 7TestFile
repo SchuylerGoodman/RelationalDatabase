@@ -1,0 +1,11 @@
+Schemes:
+First(a,b,c)
+Second(d,e)
+Third(a,c,e)
+Facts:
+First('a','b','c').
+Second('c','d').
+Rules:
+Third(A,C,E) :- First(A,B,C),Second(C,D).
+Queries:
+First('a',N,N)?

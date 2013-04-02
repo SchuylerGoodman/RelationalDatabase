@@ -10,23 +10,33 @@ Schema::Schema(IdentifierList* inputIdList)
     setSchematics(inputIdList);
 }
 
-Schema::Schema(Schema& inputSchema)
+Schema::Schema(const Schema& inputSchema)
 {
-    schematics = new vector<Token*>(*inputSchema.getSchematics());
+    schematics = new vector<Token>(*inputSchema.getSchematics());
+}
+
+Schema::Schema(vector<Token>& inputTokens)
+{
+    schematics = new vector<Token>();
+    for(int i = 0; i < inputTokens.size(); i++)
+    {
+        Token newToken(inputTokens[i]);
+        schematics->push_back(newToken);
+    }
 }
 
 Schema::~Schema()
 {
 }
 
-vector<Token*>* Schema::getSchematics()
+vector<Token>* Schema::getSchematics() const
 {
     return schematics;
 }
 
 void Schema::renameTokenAt(int index, Token& inputToken)
 {
-    (*(*schematics)[index]) = inputToken;
+    (*schematics)[index] = inputToken;
     return;
 }
 
@@ -49,14 +59,35 @@ string Schema::toString()
     string out;
     for(int i = 0; i < schematics->size(); i++)
     {
-        out += "  " + (*schematics)[i]->getTokensValue() + " ";
+        out += "  " + (*schematics)[i].getTokensValue() + " ";
     }
     return out;
 }
 
+vector<Token> Schema::getTVecFromSchema()
+{
+    vector<Token> newVec;
+    for(int i = 0; i < schematics->size(); i++)
+    {
+        Token newToken((*schematics)[i]);
+        newVec.push_back(newToken);
+    }
+    return newVec;
+}
+
+Token Schema::operator[](int index)
+{
+    return (*schematics)[index];
+}
+
 void Schema::setSchematics(IdentifierList* inputIdList)
 {
-    schematics = new vector<Token*>();
-    (*schematics) = (*inputIdList->getIDs());
+    schematics = new vector<Token>();
+    vector<Token*> IDTokens = (*inputIdList->getIDs());
+    for(int i = 0; i < IDTokens.size(); i++)
+    {
+        Token newToken = (*IDTokens[i]);
+        schematics->push_back(newToken);
+    }
     return;
 }
