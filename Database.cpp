@@ -116,6 +116,12 @@ string Database::solveRules()
             pair<vector<Token>, vector<Token> > newPair(firstParams, secondParams);
             Relation newRelation(firstRelation->Join(newPair, secondRelation));
             out += newRelation.toString() + "\n";
+            Relation* headRelation = findRelation((*rules)[i]->getHeadPredicateID());
+            newPair.second = newPair.first;
+            newPair.first = (*rules)[i]->getHeadPredicateParameters();
+            Relation afterUnion = headRelation->Union(newPair, newRelation);
+            out += "After Union\n" + afterUnion.toString() + "\n";
+            //FINISH UNION
         }
     }
     return out;

@@ -48,6 +48,22 @@ PredicateList* Rule::getPredicateList()
     return predicateList;
 }
 
+Token Rule::getHeadPredicateID()
+{
+    return (*HeadPredicate->getSchemeID());
+}
+
+vector<Token> Rule::getHeadPredicateParameters()
+{
+    vector<Token> newVec;
+    vector<Token*>* parameters = HeadPredicate->getIDList()->getIDs();
+    for(int i = 0; i < parameters->size(); i++)
+    {
+        newVec.push_back((*(*parameters)[i]));
+    }
+    return newVec;
+}
+
 vector<Token> Rule::getParametersAt(int index)
 {
     vector<Token> newVec;

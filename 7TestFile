@@ -1,11 +1,11 @@
 Schemes:
 First(a,b,c)
-Second(d,e)
+Second(d,e,f)
 Third(a,c,e)
 Facts:
 First('a','b','c').
-Second('c','d').
+Second('c','d','e').
 Rules:
-Third(A,C,E) :- First(A,B,C),Second(C,D).
+Third(A,C,E) :- First(A,B,C),Second(C,D,E).
 Queries:
 First('a',N,N)?

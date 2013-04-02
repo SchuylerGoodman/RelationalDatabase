@@ -518,4 +518,19 @@ Relation Relation::CartesianCrossProduct(pair<vector<Token>, vector<Token> >& pa
 
     return R3;
 }
-    
+
+Relation Relation::Union(pair<vector<Token>, vector<Token> >& pair, Relation& rightRelation)
+{
+    Relation newRelation = (*this);
+    Relation copyRelation = rightRelation;
+    Relation rightAfterRename = copyRelation.rename(pair, newRelation);
+    vector<Token>* vecPoint = new vector<Token>(pair.first);
+    Relation rightAfterProject = rightAfterRename.project(pair.second, vecPoint);
+    set<Tuple>* rightTuples = rightAfterProject.getTuples();
+    for(set<Tuple>::iterator it = rightTuples->begin(); it != rightTuples->end(); it++)
+    {
+        Tuple thisTuple = (*it);
+        newRelation.insertTuple(thisTuple);
+    }
+    return newRelation;
+}

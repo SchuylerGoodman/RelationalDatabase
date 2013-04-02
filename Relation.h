@@ -55,6 +55,8 @@ class Relation
 
     Relation Join(pair<vector<Token>, vector<Token> >& pair, Relation* nextRelation);
 
+    Relation Union(pair<vector<Token>, vector<Token> >& pair, Relation& rightRelation);
+
   private:
 
     Token* Id;
