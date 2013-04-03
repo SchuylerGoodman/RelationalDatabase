@@ -80,7 +80,21 @@ tuplePair Tuple::getTuplePairAt(int index) const
 
 void Tuple::removePairWithout(vector<Token>& inputTokens)
 {
-    int oldPairSize = 0;
+    vector<tuplePair> newPair;
+    for(int i = 0; i < inputTokens.size(); i++)
+    {
+        for(int j = 0; j < pairs.size(); j++)
+        {
+            if(inputTokens[i].getTokensValue() == pairs[j].first.getTokensValue())
+            {
+                newPair.push_back(pairs[j]);
+            }
+        }
+    }
+    pairs = newPair;
+    return;
+
+/*    int oldPairSize = 0;
     while(oldPairSize != pairs.size())
     {
         int i = 0;
@@ -101,7 +115,8 @@ void Tuple::removePairWithout(vector<Token>& inputTokens)
             }
             i += 1;
         }
-    }
+    }*/
+
 }
 
 vector<tuplePair> Tuple::getPairs() const

@@ -38,22 +38,13 @@ vector<Token> combineTokenVectors(vector<Token>& first, vector<Token>& second)
 
 vector<Token> removeStrings(vector<Token>& inputVector)
 {
-    vector<int> strings;
-    vector<Token> newVec(inputVector);
+    vector<Token> newVec;
     for(int i = 0; i < inputVector.size(); i++)
     {
-        if(inputVector[i].getTokenType() == STRING)
+        if(inputVector[i].getTokenType() == ID)
         {
-            strings.push_back(i);
+            newVec.push_back(inputVector[i]);
         }
-    }
-    for(int i = 0; i < strings.size(); i++)
-    {
-        for(int j = strings[i]; j < inputVector.size() - 1; j++)
-        {
-            newVec[j] = newVec[j + 1];
-        }
-        newVec.pop_back();
     }
     return newVec;
 }
@@ -245,15 +236,18 @@ void Relation::setSchema(Schema& inputSchema)
 
 void Relation::setSchemaFromTuples()
 {
-    vector<Token> newSchemaTokens;
-    set<Tuple>::iterator it = tuples->begin();
-    for(int i = 0; i < it->getPairVectorSize(); i++)
+    if(tuples->size() > 0)
     {
-        newSchemaTokens.push_back((*it)[i]);
+        vector<Token> newSchemaTokens;
+        set<Tuple>::iterator it = tuples->begin();
+        for(int i = 0; i < it->getPairVectorSize(); i++)
+        {
+            newSchemaTokens.push_back((*it)[i]);
+        }
+        Schema* deleteSchema = schema;
+        schema = new Schema(newSchemaTokens);
+        delete deleteSchema;
     }
-    Schema* deleteSchema = schema;
-    schema = new Schema(newSchemaTokens);
-    delete deleteSchema;
 }
 
 void Relation::setTuples(set<Tuple>* inputTuples)
@@ -364,7 +358,7 @@ Relation Relation::rename(pair<vector<Token>, vector<Token> >& ruleParameters, R
             {
                 Schema* tSchema = targetRelation.getSchema();
                 Token thisToken = (*tSchema)[myMap[k].second[FIRST][FIRST]];
-                tSchema->renameTokenAt(i, thisToken); // Rename left-side arguments that will be joined
+                tSchema->renameTokenAt(i, thisToken); // Rename right-side arguments that will be joined
                 myMap[k].second[FIRST].push_back(i);
                 insert = false; // don't insert that token
             }
@@ -383,6 +377,17 @@ Relation Relation::rename(pair<vector<Token>, vector<Token> >& ruleParameters, R
             if(myMap[i].first.getTokensValue() == ruleParameters.second[j].getTokensValue())
             {
                 myMap[i].second[SECOND].push_back(j);
+            }
+            else
+            {
+                Schema* tSchema = targetRelation.getSchema();
+                if((*tSchema)[myMap[i].second[FIRST][FIRST]].getTokensValue() == (*schema)[j].getTokensValue());
+                {
+                    string newValue = (*schema)[j].getTokensValue() + "$";
+                    Token newToken = (*schema)[j];
+                    newToken.setTokenValue(newValue);
+                    schema->renameTokenAt(j, newToken);
+                }
             }
         }
     }
@@ -420,41 +425,39 @@ Relation Relation::project(vector<Token>& inputTokens, vector<Token>* opTokens)
     vector<Token> newVec;
     set<Tuple>* newTuples = new set<Tuple>();
 
+    if(opTokens)
+    {
+        for(int i = 0; i < opTokens->size(); i++)
+        {
+            for(int j = 0; j < inputTokens.size(); j++)
+            {
+                if(inputTokens[j].getTokensValue() == (*opTokens)[i].getTokensValue())
+                {
+                    newVec.push_back((*(schema->getSchematics()))[j]);
+                }
+            }
+        }
+    }
+    else
+    {
+        vector<int> intVec = getIDsFromTokenVector(inputTokens);
+        for(int i = 0; i < intVec.size(); i++)
+        {
+            newVec.push_back((*(schema->getSchematics()))[intVec[i]]);
+        }
+    }
+
     for(set<Tuple>::iterator it = tuples->begin(); it != tuples->end(); it++) // for all the old tuples
     {
-        if(opTokens)
-        {
-            for(int i = 0; i < inputTokens.size(); i++)
-            {
-                bool insert = false;
-                for(int j = 0; j < opTokens->size(); j++)
-                {
-                    if(inputTokens[i].getTokensValue() == (*opTokens)[j].getTokensValue())
-                    {
-                        insert = true;
-                    }
-                }
-                if(insert)
-                {
-                    newVec.push_back((*(schema->getSchematics()))[i]);
-                }
-            }
-        }
-        else
-        {
-            vector<int> intVec = getIDsFromTokenVector(inputTokens);
-            for(int i = 0; i < intVec.size(); i++)
-            {
-                newVec.push_back((*(schema->getSchematics()))[intVec[i]]);
-            }
-        }
         Tuple newTuple = (*it); // copy this tuple
         newTuple.removePairWithout(newVec); // remove pairs that don't fit projection parameters
         newTuples->insert(newTuple);
     }
     set<Tuple>* deleteTuples = newRelation.getTuples();
     newRelation.setTuples(newTuples);
+    newRelation.setSchemaFromTuples();
     delete deleteTuples;
+
     return newRelation;
 }
 
@@ -462,6 +465,7 @@ Relation Relation::Join(pair<vector<Token>, vector<Token> >& pair, Relation* nex
 {
     Relation thisAfterSelect = this->select(pair.first);
     Relation thisAfterProject = thisAfterSelect.project(pair.first, 0);
+    pair.first = removeStrings(pair.first);
 
     if(nextRelation != 0)
     {

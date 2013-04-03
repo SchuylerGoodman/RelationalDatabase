@@ -48,9 +48,9 @@ PredicateList* Rule::getPredicateList()
     return predicateList;
 }
 
-Token Rule::getHeadPredicateID()
+Token* Rule::getHeadPredicateID()
 {
-    return (*HeadPredicate->getSchemeID());
+    return HeadPredicate->getSchemeID();
 }
 
 vector<Token> Rule::getHeadPredicateParameters()
@@ -64,19 +64,33 @@ vector<Token> Rule::getHeadPredicateParameters()
     return newVec;
 }
 
-vector<Token> Rule::getParametersAt(int index)
+vector<Token>* Rule::getParametersAt(int index)
 {
-    vector<Token> newVec;
-    vector<Parameter*>* parameters = (*predicateList->getPredicates())[index]->getParameterList()->getParameters();
-    for(int i = 0; i < parameters->size(); i++)
+    if(index > (predicateList->getSize()))
     {
-        newVec.push_back((*(*parameters)[i]->getParameterToken()));
+        return 0;
     }
-    return newVec;
+    else
+    {
+        vector<Token>* newVec = new vector<Token>();
+        vector<Parameter*>* parameters = (*predicateList->getPredicates())[index]->getParameterList()->getParameters();
+        for(int i = 0; i < parameters->size(); i++)
+        {
+            newVec->push_back((*(*parameters)[i]->getParameterToken()));
+        }
+        return newVec;
+    }
 }
 
-Token Rule::getParameterIDAt(int index)
+Token* Rule::getParameterIDAt(int index)
 {
-    Token newToken = (*(*predicateList->getPredicates())[index]->getPredicateID());
-    return newToken;
+    if(index > (predicateList->getSize()))
+    {
+        return 0;
+    }
+    else
+    {
+        Token* newToken = (*predicateList->getPredicates())[index]->getPredicateID();
+        return newToken;
+    }
 }

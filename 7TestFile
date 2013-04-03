@@ -8,4 +8,4 @@ Second('c','d','e').
 Rules:
 Third(A,C,E) :- First(A,B,C),Second(C,D,E).
 Queries:
-First('a',N,N)?
+Third('a',N,M)?

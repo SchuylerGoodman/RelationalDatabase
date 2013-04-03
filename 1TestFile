@@ -6,7 +6,8 @@ span('a','b','c','d').
 span('q','w','e','r').
 span('q','w','e','r').
 plan('b','b','v','r').
+plan('q','w','e','r').
 Rules:
-span(l,n,m,o) :- span(e,f,g,o),plan(z,x,v,o).
+span(f,e,v,o) :- span(e,f,g,o),plan(z,x,v,o).
 Queries:
-span(a,b,c,d)?
+span(q,w,t,y)?

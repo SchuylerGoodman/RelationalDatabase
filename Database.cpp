@@ -22,7 +22,10 @@ Database::Database(DatalogProgram* dprog)
     }
 
 //Populate Tuples from Rules TODO
-    cout << solveRules() + "\n";
+    if(rules->size() > 0)
+    {
+        cout << solveRules() + "\n";
+    }
 
 //Answer Queries
     for(int i = 0; i < queries->size(); i++)
@@ -69,17 +72,38 @@ Relation* Database::getRelation(Scheme* inputScheme)
     return relation;
 }
 
-Relation* Database::findRelation(Token relationID)
+Relation* Database::findRelation(Token* relationID)
 {
+    if(relationID == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        for(int i = 0; i < relations->size(); i++)
+        {
+            if((*(*relations)[i]->getID()).getTokensValue() == relationID->getTokensValue())
+            {
+                Relation* outRelation = (*relations)[i];
+                return outRelation;
+            }
+        }
+        throw("This relation does not exist");
+    }
+}
+
+void Database::setRelation(Relation* inputRelation)
+{
+    Token* relationID = inputRelation->getID();
     for(int i = 0; i < relations->size(); i++)
     {
-        if((*(*relations)[i]->getID()).getTokensValue() == relationID.getTokensValue())
+        if((*(*relations)[i]->getID()).getTokensValue() == relationID->getTokensValue())
         {
-            Relation* outRelation = (*relations)[i];
-            return outRelation;
+            (*relations)[i] = inputRelation;
+            return;
         }
     }
-    throw("Relation with ID=" + relationID.getTokensValue() + " not found in database");
+    throw("Relation with ID=" + relationID->getTokensValue() + " not found in database");
 }
 
 void Database::insertTuple(Fact* inputFact)
@@ -104,26 +128,46 @@ void Database::insertTuple(Fact* inputFact)
 //rules
 string Database::solveRules()
 {
+    int preCount = 0;
+    int postCount = getTupleCount();
+    int times = 0;
     string out;
-    for(int i = 0; i < rules->size(); i++)
+    while(preCount != postCount)
     {
-        if((*rules)[i]->getSize() > 1)
+        preCount = getTupleCount();
+        for(int i = 0; i < rules->size(); i++)
         {
-            Relation* firstRelation = findRelation((*rules)[i]->getParameterIDAt(0));
-            Relation* secondRelation = findRelation((*rules)[i]->getParameterIDAt(1));
-            vector<Token> firstParams = (*rules)[i]->getParametersAt(0);
-            vector<Token> secondParams = (*rules)[i]->getParametersAt(1);
-            pair<vector<Token>, vector<Token> > newPair(firstParams, secondParams);
-            Relation newRelation(firstRelation->Join(newPair, secondRelation));
-            out += newRelation.toString() + "\n";
+            Relation firstRelation = (*findRelation((*rules)[i]->getParameterIDAt(0)));
+            vector<Token> firstParams = (*(*rules)[i]->getParametersAt(0));
+            pair<vector<Token>, vector<Token> > newPair(firstParams, vector<Token>());
+
+            for(int j = 0; j < (*rules)[i]->getSize(); j++)
+            {
+                Relation* secondRelation = findRelation((*rules)[i]->getParameterIDAt(j + 1));
+                vector<Token>* secondParams = (*rules)[i]->getParametersAt(j + 1);
+                if(secondParams != 0)
+                {
+                    newPair.second = (*secondParams);
+                }
+                Relation newRelation(firstRelation.Join(newPair, secondRelation));
+               firstRelation = newRelation;
+            //    out += newRelation.toString() + "\n";
+            }
+
             Relation* headRelation = findRelation((*rules)[i]->getHeadPredicateID());
             newPair.second = newPair.first;
             newPair.first = (*rules)[i]->getHeadPredicateParameters();
-            Relation afterUnion = headRelation->Union(newPair, newRelation);
-            out += "After Union\n" + afterUnion.toString() + "\n";
-            //FINISH UNION
+            Relation* afterUnion = new Relation(headRelation->Union(newPair, firstRelation));
+            Relation* deleteRelation = headRelation;
+            setRelation(afterUnion);
+            delete deleteRelation;
+             //   out += "After Union\n" + afterUnion->toString() + "\n";
         }
+        postCount = getTupleCount();
+        ++times;
     }
+    stringstream tout; tout << times;
+    out = "Schemes populated after " + tout.str() + " passes through the Rules.";
     return out;
 }
     
@@ -160,6 +204,16 @@ string Database::answerQuery(Query* inputQuery)
         out += good_relation.solvedQueryToString(queryTokens);
     }
     return out;
+}
+
+int Database::getTupleCount()
+{
+    int count = 0;
+    for(int i = 0; i < relations->size(); i++)
+    {
+        count += (*relations)[i]->getTupleListSize();
+    }
+    return count;
 }
 
 

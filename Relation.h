@@ -71,6 +71,8 @@ class Relation
 
     Relation CartesianCrossProduct(pair<vector<Token>, vector<Token> >& pair, Relation& inputRelation);
 
+//    void renameDuplicate(Relation* leftRelation);
+
 };
 
 #endif

@@ -1,8 +1,12 @@
 Schemes:
-S(A,B,C)
+S(A,B)
+N(C,D)
+L(E,F)
 Facts:
-S('a','a','a').
-S('a','b','b').
+N('a','b').
+L('b','a').
 Rules:
+S(a,b) :- N(a,b),L(b,a).
+S(a,b) :- S(b,a).
 Queries:
-S(X,'a',Y)?
+S(one,two)?

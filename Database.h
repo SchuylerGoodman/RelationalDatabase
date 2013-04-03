@@ -22,13 +22,17 @@ class Database
 
     Relation* getRelation(Scheme* inputScheme);
 
-    Relation* findRelation(Token relationID);
+    Relation* findRelation(Token* relationID);
+
+    void setRelation(Relation* inputRelation);
 
     void insertTuple(Fact* inputFact);
 
     string solveRules();
 
     string answerQuery(Query* inputQuery); 
+
+    int getTupleCount();
 
     vector<Scheme*>* schemes;
 

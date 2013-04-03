@@ -24,13 +24,13 @@ class Rule
 
     PredicateList* getPredicateList();
 
-    Token getHeadPredicateID();
+    Token* getHeadPredicateID();
 
     vector<Token> getHeadPredicateParameters();
 
-    vector<Token> getParametersAt(int index);
+    vector<Token>* getParametersAt(int index);
 
-    Token getParameterIDAt(int index);
+    Token* getParameterIDAt(int index);
 
   private:
 
