@@ -12,7 +12,7 @@ Database::Database(DatalogProgram* dprog)
 //Make Relations From Schemes
     for(int i = 0; i < schemes->size(); i++)
     {
-        relations->push_back(getRelation((*schemes)[i]));
+        relations->push_back(getNewRelation((*schemes)[i]));
     }
 
 //Insert Tuples From Facts
@@ -22,23 +22,48 @@ Database::Database(DatalogProgram* dprog)
     }
 
 //Populate Tuples from Rules TODO
-    if(rules->size() > 0)
+    /*if(rules->size() > 0)
     {
         cout << solveRules() + "\n";
-    }
+    }*/
 
+    //string getOUT;
+    depends = new graph(this);
 //Answer Queries
     for(int i = 0; i < queries->size(); i++)
     {
         string out;
         out += (*queries)[i]->toString();
+        out += solveQuery((*queries)[i]) + "\n";/*
         out += answerQuery((*queries)[i]) + "\n";
+        vector<graphnode*>* dfsTree = depends->buildDFS((*queries)[i]);
+        if(dfsTree != 0)
+        {
+            for(int j = 0; j < dfsTree->size(); j++)
+            {
+                if(j > 0)
+                {
+                    getOUT += ", ";
+                }
+                getOUT += (*dfsTree)[j]->simpleToString();
+            }
+            getOUT += "\n";
+        }*/
         cout << out;
     }
+
+
+    //cout << depends->toString() << "\n";
+    //cout << "TREES" << endl << getOUT;
 }
 
 Database::~Database()
 {
+}
+
+vector<Relation*>* Database::getRelations()
+{
+    return relations;
 }
 
 string Database::toString()
@@ -49,6 +74,20 @@ string Database::toString()
         out += (*relations)[i]->toString();
     }
     return out;
+}
+
+int Database::getRulesListSize()
+{
+    return rules->size();
+}
+
+Rule* Database::getRuleAt(int& index)
+{
+    if(index > rules->size())
+    {
+        return 0;
+    }
+    return (*rules)[index];
 }
 
 Relation Database::workThatRelation(Relation& inputRelation, Query* inputQuery)
@@ -66,7 +105,7 @@ Relation Database::workThatRelation(Relation& inputRelation, Query* inputQuery)
     return R2;
 }
 
-Relation* Database::getRelation(Scheme* inputScheme)
+Relation* Database::getNewRelation(Scheme* inputScheme)
 {
     Relation* relation = new Relation(inputScheme);
     return relation;
@@ -125,50 +164,106 @@ void Database::insertTuple(Fact* inputFact)
     }
 }
 
+string Database::solveQuery(Query* inputQuery)
+{
+    string out;
+    if(rules->size() > 0)
+    {
+      vector<graphnode*>* dfsTree = depends->buildDFS(inputQuery);
+      if(dfsTree != 0) // if query has dependencies
+      {
+          for(int i = 0; i < dfsTree->size(); i++) // for all in topsort
+          {
+              if((*dfsTree)[i]->lfp() == false) // if no cycle here
+              {
+                  for(int j = 0; j < rules->size(); j++) // for every rule
+                  {
+                      if((*dfsTree)[i]->getRelation()->getID()->getTokensValue() == (*rules)[j]->getHeadPredicateID()->getTokensValue())//rfind
+                      {
+                          solveRule((*rules)[j]); // solve it!
+                      }
+                  }
+              }
+              else // if cycle starts here
+              {
+                  int count = i; // for every node in the cycle, use the least fixed point algorithm
+                  while(count < dfsTree->size() && (*dfsTree)[count]->lfp() != false) // in topsort, and lfp = true
+                  {
+                      ++count;
+                  }
+                  solveRules(dfsTree, i, count);
+                  i = count - 1; // move i ahead as necessary
+              }
+          }
+      }
+    }
+    out += answerQuery(inputQuery); // answer the query
+    return out;
+}
+
 //rules
-string Database::solveRules()
+
+void Database::solveRule(Rule* inputRule)
+{
+    Relation firstRelation = (*findRelation(inputRule->getParameterIDAt(0)));
+    vector<Token> firstParams = (*inputRule->getParametersAt(0));
+    pair<vector<Token>, vector<Token> > newPair(firstParams, vector<Token>());
+
+    for(int j = 0; j < inputRule->getSize(); j++)
+    {
+        Relation* secondRelation = findRelation(inputRule->getParameterIDAt(j + 1));
+        vector<Token>* secondParams = inputRule->getParametersAt(j + 1);
+        if(secondParams != 0)
+        {
+            newPair.second = (*secondParams);
+        }
+        Relation newRelation(firstRelation.Join(newPair, secondRelation));
+        firstRelation = newRelation;
+    }
+
+    Relation* headRelation = findRelation(inputRule->getHeadPredicateID());
+    newPair.second = newPair.first;
+    newPair.first = inputRule->getHeadPredicateParameters();
+    Relation* afterUnion = new Relation(headRelation->Union(newPair, firstRelation));
+    Relation* deleteRelation = headRelation;
+    setRelation(afterUnion);
+//    delete deleteRelation;
+    return;
+}
+
+void Database::solveRules(vector<graphnode*>* toppity, int& begin, int& end)
 {
     int preCount = 0;
-    int postCount = getTupleCount();
+
     int times = 0;
     string out;
-    while(preCount != postCount)
+    vector<Rule*>* unruly = new vector<Rule*>();
+    for(int i = begin; i < end; i++)
     {
-        preCount = getTupleCount();
-        for(int i = 0; i < rules->size(); i++)
+        for(int j = 0; j < rules->size(); j++)
         {
-            Relation firstRelation = (*findRelation((*rules)[i]->getParameterIDAt(0)));
-            vector<Token> firstParams = (*(*rules)[i]->getParametersAt(0));
-            pair<vector<Token>, vector<Token> > newPair(firstParams, vector<Token>());
-
-            for(int j = 0; j < (*rules)[i]->getSize(); j++)
+            if((*toppity)[i]->getRelation()->getID()->getTokensValue() == (*rules)[j]->getHeadPredicateID()->getTokensValue())
             {
-                Relation* secondRelation = findRelation((*rules)[i]->getParameterIDAt(j + 1));
-                vector<Token>* secondParams = (*rules)[i]->getParametersAt(j + 1);
-                if(secondParams != 0)
-                {
-                    newPair.second = (*secondParams);
-                }
-                Relation newRelation(firstRelation.Join(newPair, secondRelation));
-               firstRelation = newRelation;
-            //    out += newRelation.toString() + "\n";
+                unruly->push_back((*rules)[j]);
             }
-
-            Relation* headRelation = findRelation((*rules)[i]->getHeadPredicateID());
-            newPair.second = newPair.first;
-            newPair.first = (*rules)[i]->getHeadPredicateParameters();
-            Relation* afterUnion = new Relation(headRelation->Union(newPair, firstRelation));
-            Relation* deleteRelation = headRelation;
-            setRelation(afterUnion);
-            delete deleteRelation;
-             //   out += "After Union\n" + afterUnion->toString() + "\n";
         }
-        postCount = getTupleCount();
-        ++times;
     }
+    int postCount = getTupleCount(unruly);
+
+    do
+    {
+        preCount = getTupleCount(unruly);
+        for(int i = 0; i < unruly->size(); i++)
+        {
+            solveRule((*unruly)[i]);
+        }
+        postCount = getTupleCount(unruly);
+        ++times;
+    }while(preCount != postCount);
     stringstream tout; tout << times;
     out = "Schemes populated after " + tout.str() + " passes through the Rules.";
-    return out;
+    delete unruly;
+    return;
 }
     
 
@@ -206,17 +301,16 @@ string Database::answerQuery(Query* inputQuery)
     return out;
 }
 
-int Database::getTupleCount()
+int Database::getTupleCount(vector<Rule*>* thisTotallyRules)
 {
     int count = 0;
-    for(int i = 0; i < relations->size(); i++)
+    for(int i = 0; i < thisTotallyRules->size(); i++)
     {
-        count += (*relations)[i]->getTupleListSize();
+        Relation* thisRelationRules = this->findRelation((*thisTotallyRules)[i]->getHeadPredicateID());
+        count += thisRelationRules->getTupleListSize();
     }
     return count;
 }
-
-
 
 int main(int argc, char* argv[])
 {
